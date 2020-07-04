@@ -1,0 +1,4 @@
+{
+    "sqlite_database_name":"opendatabcn.db",
+    "covid_measures_table":"rep_measures_covid"
+}
