@@ -10,7 +10,7 @@ from airflow.hooks.postgres_hook import PostgresHook
 
 default_args = {
     'owner': 'Josu Alonso',
-    'start_time': datetime(2020, 7, 1, 0, 0, 0)
+    'start_date': datetime(2020, 7, 1, 0, 0, 0)
 }
 
 
