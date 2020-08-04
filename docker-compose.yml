@@ -21,6 +21,7 @@ services:
             - ./dags:/usr/local/airflow/dags
             - ./test:/usr/local/airflow/test
             - ./plugins:/usr/local/airflow/plugins
+            - ./variables.json:/usr/local/airflow/variables.json
             # Uncomment to include custom plugins
             - ./requirements.txt:/requirements.txt
             - ~/.aws:/usr/local/airflow/.aws
