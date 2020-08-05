@@ -1,7 +1,7 @@
 version: "3.7"
 x-airflow-environment: &airflow-environment
   AIRFLOW__CORE__EXECUTOR: LocalExecutor
-  AIRFLOW__CORE__LOAD_EXAMPLES: "True"
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
   AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
   AIRFLOW__CORE__FERNET_KEY: FB0o_zt4e3Ziq3LdUUO7F2Z95cvFFx16hU8jTeR1ASM=
   AIRFLOW__DAG_DEFAULT_VIEW: graph
@@ -40,8 +40,13 @@ services:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - ./logs:/opt/airflow/logs
+      - ./requirements.txt:/opt/airflow/requirements.txt
+      - ./variables.json:/opt/airflow/variables.json
     entrypoint: /bin/bash
-    command: -c "airflow webserver"
+    command: >
+      -c "airflow variables -i variables.json && airflow webserver"
+# Uncomment to use requirements.txt
+#      -c "airflow variables -i variables.json && pip install --user -r requirements.txt && airflow webserver"
     restart: always
   scheduler:
     image: apache/airflow:1.10.10
@@ -53,6 +58,12 @@ services:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - ./logs:/opt/airflow/logs
+      - ./requirements.txt:/opt/airflow/requirements.txt
+      - ./variables.json:/opt/airflow/variables.json
     entrypoint: /bin/bash
-    command: -c "airflow scheduler"
+    command: >
+      -c "airflow variables -i variables.json && airflow scheduler"
+# Uncomment to use requirements.txt
+#      -c "airflow variables -i variables.json && pip install --user -r requirements.txt && airflow scheduler"
+
     restart: always
