@@ -1,5 +1,4 @@
 import requests
-import json
 import pandas as pd
 from datetime import datetime
 
@@ -34,4 +33,4 @@ with DAG(dag_id='get_rep_covid_measures',
     request = PythonOperator(task_id='request',
                              python_callable=get_request)
 
-start > request
+start >> request

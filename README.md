@@ -3,6 +3,15 @@ Project based on getting data from public sources and combine it into a single D
 
 # How to
 docker-compose up
+
 docker-compose build
 
-Go to Admin/Variables -> import variables -> ./variables.json
+
+Create database covidbcn
+
+Set postgres_covid connection using:
+localhost
+covidbcn
+airflow
+airflow
+5432
