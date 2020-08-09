@@ -1,6 +1,24 @@
 {
     "covid_measures_table": {
-        "name": "rep_measures_covid",
+        "name": "rep_covid",
         "url": "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=290eb517-e7fa-41fb-aa59-389becb8f55b&limit=100000000"
+    },
+    "traffic_measures_table": {
+        "name": "rep_traffic",
+        "january": {
+            "url":
+        },
+        "february": {
+            "url":
+        },
+        "march": {
+            "url":
+        },
+        "april": {
+            "url":
+        },
+        "may": {
+            "url":
+        },
     }
 }
