@@ -16,35 +16,39 @@ table_variables = Variable.get('covid_measures_table',
 default_args = {
     'owner': 'Josu Alonso',
     'start_date': datetime(2020, 7, 1, 0, 0, 0),
-    'postgres_conn_id': 'postgres_covid'
+    'postgres_conn_id': 'postgres_default'
 }
 
 sql = f"""
 CREATE TABLE {table_variables['name']} (
-id INT,
-Data_Indicador TIMESTAMP,
-Font VARCHAR(100)),
-Frequencia_Indicador VARCHAR(25),
-Nom_Indicador VARCHAR(55),
-Nom_Variable VARCHAR(55),
-Territori VARCHAR(55),
-Unitat VARCHAR(55),
-Valor INT,
-Insert_TS TIMESTAMP,
-CONTRAINT pk_{table_variables['name']} PRIMARY KEY (id);
+  id INT,
+  Data_Indicador TIMESTAMP,
+  Font VARCHAR(100),
+  Frequencia_Indicador VARCHAR(25),
+  Nom_Indicador VARCHAR(55),
+  Nom_Variable VARCHAR(55),
+  Territori VARCHAR(55),
+  Unitat VARCHAR(55),
+  Valor INT,
+  Insert_TS TIMESTAMP,
+  CONSTRAINT pk_{table_variables['name']} PRIMARY KEY(id));
 """
 
 
-def insert_rows(postgres_conn_id):
+def insert_rows():
     # cuidado con no ponerlo explícito!
 
-    pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+    pg_hook = PostgresHook(postgres_conn_id='postgres_default')
     sql_insert = f"""INSERT INTO {table_variables['name']}
                      VALUES (%s, %s, %s, %s, %s, %s ,%s, %s, %s, %s)"""
 
-    http_hook = HttpHook(http_conn_id=table_variables['url'],
+    http_hook = HttpHook(http_conn_id=table_variables['http_conn_id'],
                          method='GET')
-    res = http_hook.run('')
+    res = http_hook.run(endpoint=table_variables['endpoint'],
+                        data={'resource_id': table_variables['resource_id'],
+                              'limit': '10000000'})
+
+    http_hook.check_response(response=res)
 
     bcn_covid_measures = res.json()['result']['records']
 
@@ -53,8 +57,12 @@ def insert_rows(postgres_conn_id):
                                  'Nom_Variable', 'Territori', 'Unitat', 'Valor']]
     insert_ts = datetime.utcnow()
 
+    for a, b in bcn_covid_df.iteritems():
+        print(a)
+        """
     for _id, date, source, freq, ind, var, region, unit, value in bcn_covid_df.iteritems():
         pg_hook.run(sql_insert, parameters=(_id, date, source, freq, ind, var, region, unit, value, insert_ts))
+"""
 
 
 with DAG(dag_id='get_rep_covid_measures',

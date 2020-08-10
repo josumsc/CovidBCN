@@ -9,9 +9,4 @@ docker-compose build
 
 Create database covidbcn
 
-Set postgres_covid connection using:
-localhost
-covidbcn
-airflow
-airflow
-5432
+Change password in postgres_default to airflow
