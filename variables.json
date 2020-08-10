@@ -1,6 +1,8 @@
 {
     "covid_measures_table": {
         "name": "rep_measures_covid",
-        "url": "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=290eb517-e7fa-41fb-aa59-389becb8f55b&limit=100000000"
+        "http_conn_id": "http_opendatabcn",
+        "endpoint": "data/api/action/datastore_search",
+        "resource_id": "290eb517-e7fa-41fb-aa59-389becb8f55b"
     }
 }
