@@ -1,10 +1,12 @@
 from datetime import datetime
 import pandas as pd
+import numpy as np
 
 from airflow.models import DAG
 from airflow.models import Variable
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.hooks.http_hook import HttpHook
@@ -21,15 +23,15 @@ default_args = {
 
 sql = f"""
 CREATE TABLE {table_variables['name']} (
-  id INT,
+  id BIGINT,
   Data_Indicador TIMESTAMP,
-  Font VARCHAR(100),
+  Font VARCHAR(250),
   Frequencia_Indicador VARCHAR(25),
-  Nom_Indicador VARCHAR(55),
-  Nom_Variable VARCHAR(55),
-  Territori VARCHAR(55),
-  Unitat VARCHAR(55),
-  Valor INT,
+  Nom_Indicador VARCHAR(100),
+  Nom_Variable VARCHAR(100),
+  Territori VARCHAR(100),
+  Unitat VARCHAR(100),
+  Valor DECIMAL(16, 2),
   Insert_TS TIMESTAMP,
   CONSTRAINT pk_{table_variables['name']} PRIMARY KEY(id));
 """
@@ -55,14 +57,16 @@ def insert_rows():
     bcn_covid_df = pd.DataFrame(bcn_covid_measures)
     bcn_covid_df = bcn_covid_df[['_id', 'Data_Indicador', 'Font', 'Frequencia_Indicador', 'Nom_Indicador',
                                  'Nom_Variable', 'Territori', 'Unitat', 'Valor']]
+    bcn_covid_df.replace({'NA': np.nan,
+                          '-Inf': np.nan,
+                          'Inf': np.nan}, inplace=True)
     insert_ts = datetime.utcnow()
 
-    for a, b in bcn_covid_df.iteritems():
-        print(a)
-        """
-    for _id, date, source, freq, ind, var, region, unit, value in bcn_covid_df.iteritems():
-        pg_hook.run(sql_insert, parameters=(_id, date, source, freq, ind, var, region, unit, value, insert_ts))
-"""
+    for row in bcn_covid_df.itertuples(index=False):
+        pg_hook.run(sql_insert, parameters=(row[0], row[1], row[2],
+                                            row[3], row[4],
+                                            row[5], row[6],
+                                            row[7], row[8], insert_ts))
 
 
 with DAG(dag_id='get_rep_covid_measures',
@@ -79,5 +83,6 @@ with DAG(dag_id='get_rep_covid_measures',
 
     insert = PythonOperator(task_id='insert',
                             python_callable=insert_rows)
+
 
 start >> drop_table >> create_table >> insert
