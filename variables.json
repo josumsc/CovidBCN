@@ -4,5 +4,22 @@
         "http_conn_id": "http_opendatabcn",
         "endpoint": "data/api/action/datastore_search",
         "resource_id": "290eb517-e7fa-41fb-aa59-389becb8f55b"
-    }
+    },
+    "unemployment_gender_table": {
+        "name": "rep_unemployment_gender",
+        "http_conn_id": "http_opendatabcn",
+        "endpoint": "data/api/action/datastore_search",
+        "resource_id": "aef30645-bad5-4c79-9c25-a9a7ede830a5"
+    },
+    "unemployment_age_table": {
+        "name": "rep_unemployment_age",
+        "http_conn_id": "http_opendatabcn",
+        "endpoint": "data/api/action/datastore_search",
+        "resource_id": "1a9219d2-ea34-4f47-a493-1baecebc6756"
+    },
+    "unemployment_duration_table": {
+        "name": "rep_unemployment_duration",
+        "http_conn_id": "http_opendatabcn",
+        "endpoint": "data/api/action/datastore_search",
+        "resource_id": "043fd676-5e9a-4599-b3f8-bb0825debcab"
 }
