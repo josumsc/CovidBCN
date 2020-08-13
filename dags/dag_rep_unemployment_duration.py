@@ -10,8 +10,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.hooks.http_hook import HttpHook
 
-
-table_variables = Variable.get('covid_measures_table',
+table_variables = Variable.get('unemployment_duration_table',
                                deserialize_json=True)
 
 default_args = {
@@ -22,15 +21,15 @@ default_args = {
 
 sql = f"""
 CREATE TABLE {table_variables['name']} (
-  id BIGINT,
-  indicator_date TIMESTAMP,
-  source VARCHAR(250),
-  indicator_frequency VARCHAR(25),
-  indicator_name VARCHAR(100),
-  variable_name VARCHAR(100),
-  area VARCHAR(100),
-  unit VARCHAR(100),
-  value DECIMAL(16, 2),
+  id INT,
+  year INT,
+  month INT,
+  district_code INT,
+  district_name VARCHAR(50),
+  neighbourhood_code INT,
+  neighbourhood_name VARCHAR(100),
+  duration VARCHAR(100),
+  value BIGINT,
   insert_TS TIMESTAMP,
   CONSTRAINT pk_{table_variables['name']} PRIMARY KEY(id));
 """
@@ -50,24 +49,24 @@ def insert_rows():
 
     http_hook.check_response(response=res)
 
-    bcn_covid_measures = res.json()['result']['records']
+    unemployment_measures = res.json()['result']['records']
 
-    bcn_covid_df = pd.DataFrame(bcn_covid_measures)
-    bcn_covid_df = bcn_covid_df[['_id', 'Data_Indicador', 'Font', 'Frequencia_Indicador', 'Nom_Indicador',
-                                 'Nom_Variable', 'Territori', 'Unitat', 'Valor']]
-    bcn_covid_df.replace({'NA': np.nan,
-                          '-Inf': np.nan,
-                          'Inf': np.nan}, inplace=True)
+    unemployment_df = pd.DataFrame(unemployment_measures)
+    unemployment_df = unemployment_df[['_id', 'Any', 'Mes', 'Codi_Districte', 'Nom_Districte',
+                                      'Codi_Barri', 'Nom_Barri', 'Durada_atur', 'Nombre']]
+    unemployment_df.replace({'NA': np.nan,
+                             '-Inf': np.nan,
+                             'Inf': np.nan}, inplace=True)
     insert_ts = datetime.utcnow()
 
-    for row in bcn_covid_df.itertuples(index=False):
+    for row in unemployment_df.itertuples(index=False):
         pg_hook.run(sql_insert, parameters=(row[0], row[1], row[2],
-                                            row[3], row[4],
-                                            row[5], row[6],
-                                            row[7], row[8], insert_ts))
+                                            row[3], row[4], row[5],
+                                            row[6], row[7], row[8],
+                                            insert_ts))
 
 
-with DAG(dag_id='get_rep_covid_measures',
+with DAG(dag_id='get_rep_unemployment_duration',
          default_args=default_args,
          schedule_interval=None) as dag:
 
