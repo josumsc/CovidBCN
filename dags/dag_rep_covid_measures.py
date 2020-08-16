@@ -67,7 +67,7 @@ def insert_rows():
                                             row[7], row[8], insert_ts))
 
 
-with DAG(dag_id='get_rep_covid_measures',
+with DAG(dag_id='rep_covid_measures',
          default_args=default_args,
          schedule_interval=None) as dag:
 

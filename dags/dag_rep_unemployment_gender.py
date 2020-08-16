@@ -67,7 +67,7 @@ def insert_rows():
                                             row[9], insert_ts))
 
 
-with DAG(dag_id='get_rep_unemployment_gender',
+with DAG(dag_id='rep_unemployment_gender',
          default_args=default_args,
          schedule_interval=None) as dag:
 
