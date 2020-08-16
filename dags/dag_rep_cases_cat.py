@@ -1,5 +1,6 @@
 from datetime import datetime
 import pandas as pd
+from pathlib import Path
 
 from airflow.models import DAG
 from airflow.models import Variable
@@ -9,6 +10,9 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.hooks.http_hook import HttpHook
+
+
+dag_name = Path(__file__).stem[4:]
 
 table_variables = Variable.get('cases_cat_table',
                                deserialize_json=True)
@@ -67,7 +71,7 @@ def insert_rows():
                                             information[8], information[9], insert_ts))
 
 
-with DAG(dag_id='rep_cases_cat',
+with DAG(dag_id=dag_name,
          default_args=default_args,
          schedule_interval='@daily') as dag:
 
