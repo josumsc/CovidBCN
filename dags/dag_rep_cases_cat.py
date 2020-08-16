@@ -10,7 +10,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.hooks.http_hook import HttpHook
 
-table_variables = Variable.get('cases_spain_table',
+table_variables = Variable.get('cases_cat_table',
                                deserialize_json=True)
 
 sql = f"""
@@ -47,7 +47,8 @@ def insert_rows():
 
     http_hook = HttpHook(http_conn_id=table_variables['http_conn_id'],
                          method='GET')
-    res = http_hook.run(endpoint=table_variables['endpoint'])
+    res = http_hook.run(endpoint=table_variables['endpoint'],
+                        data={'codigo': table_variables['codigo']})
     http_hook.check_response(response=res)
 
     cases_df = pd.DataFrame(res.json()['timeline'])
@@ -66,7 +67,7 @@ def insert_rows():
                                             information[8], information[9], insert_ts))
 
 
-with DAG(dag_id='rep_cases_spain',
+with DAG(dag_id='rep_cases_cat',
          default_args=default_args,
          schedule_interval='@daily') as dag:
 
