@@ -4,6 +4,7 @@ import numpy as np
 
 from airflow.models import DAG
 from airflow.models import Variable
+from airflow.utils import dates
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
@@ -15,7 +16,7 @@ table_variables = Variable.get('unemployment_gender_table',
 
 default_args = {
     'owner': 'Josu Alonso',
-    'start_date': datetime(2020, 7, 1, 0, 0, 0),
+    'start_date': dates.days_ago(1),
     'postgres_conn_id': 'postgres_default'
 }
 
@@ -69,7 +70,7 @@ def insert_rows():
 
 with DAG(dag_id='rep_unemployment_gender',
          default_args=default_args,
-         schedule_interval=None) as dag:
+         schedule_interval='@daily') as dag:
 
     start = DummyOperator(task_id='start')
 
