@@ -20,7 +20,8 @@
     "unemployment_duration_table": {
         "name": "rep_unemployment_duration",
         "http_conn_id": "http_opendatabcn",
-        "endpoint": "data/api/action/datastore_search"
+        "endpoint": "data/api/action/datastore_search",
+        "resource_id": "043fd676-5e9a-4599-b3f8-bb0825debcab"
     },
     "cases_cat_table": {
         "name": "rep_cases_cat",
@@ -32,5 +33,13 @@
         "name": "rep_cases_spain",
         "http_conn_id": "http_secuoyas",
         "endpoint": "api/v1/es"
+    },
+    "cases_europe_table": {
+        "name": "",
+        "http_conn_id": ""
+    },
+    "cases_world_table": {
+        "name": "",
+        "http_conn_id": ""
     }
 }
