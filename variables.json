@@ -34,12 +34,8 @@
         "http_conn_id": "http_secuoyas",
         "endpoint": "api/v1/es"
     },
-    "cases_europe_table": {
-        "name": "",
-        "http_conn_id": ""
-    },
     "cases_world_table": {
-        "name": "",
-        "http_conn_id": ""
+        "name": "rep_cases_world",
+        "url": "https://opendata.ecdc.europa.eu/covid19/casedistribution/csv"
     }
 }
