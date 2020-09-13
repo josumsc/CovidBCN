@@ -24,7 +24,7 @@ CREATE TABLE {table_variables['name']}(
     cases_cases INT,
     cases_deaths INT,
     cases_country VARCHAR(50),
-    cases_geoID CHAR(2),
+    cases_geoID VARCHAR(3),
     cases_country_code CHAR(3),
     cases_population2019 BIGINT,
     cases_continent VARCHAR(10),
@@ -44,21 +44,22 @@ def insert_rows():
 
     pg_hook = PostgresHook(postgres_conn_id='postgres_default')
     sql_insert = f"""INSERT INTO {table_variables['name']}
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
     cases_df = pd.read_csv(table_variables['url'],
                            parse_dates=['dateRep'],
                            infer_datetime_format=True)
     cases_df.replace({'CNG1925': 'CNG'}, inplace=True)
+    # Dropping cases of this countryregion because of data corruption on them and not being significant
+    cases_df = cases_df[cases_df['countriesAndTerritories'] != 'Cases_on_an_international_conveyance_Japan']
     insert_ts = datetime.utcnow()
-
-# cases_cases14days1000pop numeric
 
     for row in cases_df.itertuples(index=False):
         pg_hook.run(sql_insert, parameters=(row[0], row[1], row[2],
                                             row[3], row[4], row[5],
                                             row[6], row[7], row[8],
-                                            row[9], row[10], insert_ts))
+                                            row[9], row[10], row[11],
+                                            insert_ts))
 
 
 with DAG(dag_id=dag_name,
